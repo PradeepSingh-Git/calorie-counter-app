@@ -687,6 +687,11 @@
   .camera-text { font-size: 16px; font-weight: 600; }
   .camera-sub { font-size: 13px; color: var(--text-dim); }
 
+  .camera-zone-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
   #fileInput {
     position: absolute;
     top: 0; left: 0;
@@ -1346,16 +1351,18 @@
       <h2>Log a Meal</h2>
     </div>
     <div class="scan-body">
-      <div class="camera-zone" id="camera-zone">
-        <div class="camera-placeholder" id="cam-placeholder">
-          <div class="camera-icon">📷</div>
-          <div class="camera-text">Tap to upload a photo</div>
-          <div class="camera-sub">or describe your meal below</div>
-        </div>
-        <img id="preview-img" style="display:none" />
-        <div class="camera-overlay">
-          <div style="font-size:24px">🔄</div>
-          <div style="color:white;font-weight:600;font-size:14px;margin-top:8px">Change Photo</div>
+      <div class="camera-zone-wrapper">
+        <div class="camera-zone" id="camera-zone">
+          <div class="camera-placeholder" id="cam-placeholder">
+            <div class="camera-icon">📷</div>
+            <div class="camera-text">Tap to upload a photo</div>
+            <div class="camera-sub">or describe your meal below</div>
+          </div>
+          <img id="preview-img" style="display:none" />
+          <div class="camera-overlay">
+            <div style="font-size:24px">🔄</div>
+            <div style="color:white;font-weight:600;font-size:14px;margin-top:8px">Change Photo</div>
+          </div>
         </div>
         <input type="file" id="fileInput" accept="image/*" onchange="handleImageUpload(event)" />
       </div>
