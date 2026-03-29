@@ -1695,6 +1695,25 @@ function resetImageZone() {
   document.getElementById('photo-hint').value = '';
 }
 
+function showSelectedImagePreview() {
+  if (!selectedImageFile) return;
+
+  const img = document.getElementById('preview-img');
+  const placeholder = document.getElementById('cam-placeholder');
+  const zone = document.getElementById('camera-zone');
+
+  if (selectedImageObjectUrl) {
+    URL.revokeObjectURL(selectedImageObjectUrl);
+  }
+
+  selectedImageObjectUrl = URL.createObjectURL(selectedImageFile);
+  img.src = selectedImageObjectUrl;
+  img.style.display = 'block';
+  placeholder.style.display = 'none';
+  zone.classList.add('has-image');
+  document.getElementById('photo-hint-wrap').style.display = 'block';
+}
+
 function readFileAsDataUrl(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -1746,20 +1765,11 @@ async function handleImageUpload(event) {
   if (!file) return;
 
   try {
-    const img = document.getElementById('preview-img');
-    const placeholder = document.getElementById('cam-placeholder');
-    const zone = document.getElementById('camera-zone');
     selectedImageDataUrl = null;
     selectedImageFile = file;
-    if (selectedImageObjectUrl) {
-      URL.revokeObjectURL(selectedImageObjectUrl);
-    }
-    selectedImageObjectUrl = URL.createObjectURL(file);
-    img.src = selectedImageObjectUrl;
-    img.style.display = 'block';
-    placeholder.style.display = 'none';
-    zone.classList.add('has-image');
-    document.getElementById('photo-hint-wrap').style.display = 'block';
+
+    // Defer preview work until after iOS has dismissed the gallery confirmation sheet.
+    setTimeout(showSelectedImagePreview, 0);
   } catch (err) {
     console.error(err);
     selectedImageDataUrl = null;
