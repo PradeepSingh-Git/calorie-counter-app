@@ -1339,7 +1339,7 @@
       <h2>Log a Meal</h2>
     </div>
     <div class="scan-body">
-      <div class="camera-zone" id="camera-zone" onclick="document.getElementById('fileInput').click()">
+      <label for="fileInput" class="camera-zone" id="camera-zone">
         <div class="camera-placeholder" id="cam-placeholder">
           <div class="camera-icon">📷</div>
           <div class="camera-text">Tap to upload a photo</div>
@@ -1350,7 +1350,7 @@
           <div style="font-size:24px">🔄</div>
           <div style="color:white;font-weight:600;font-size:14px;margin-top:8px">Change Photo</div>
         </div>
-      </div>
+      </label>
       <input type="file" id="fileInput" accept="image/*" onchange="handleImageUpload(event)" />
 
       <div class="photo-hint-wrap" id="photo-hint-wrap" style="display:none">
