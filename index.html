@@ -1502,6 +1502,8 @@ let state = {
 
 const MEAL_EMOJIS = ['🍕','🥗','🍜','🍱','🥩','🥑','🍳','🥙','🌯','🍚','🥞','🍝','🥦','🐟','🍗','🥚','🫕','🥘'];
 let selectedImageDataUrl = null;
+let selectedImageFile = null;
+let selectedImageObjectUrl = null;
 
 // ─── AUTH ─────────────────────────────────────────────────────────────────────
 let authMode = 'signin';
@@ -1679,6 +1681,11 @@ function resetImageZone() {
   const img = document.getElementById('preview-img');
   const placeholder = document.getElementById('cam-placeholder');
   selectedImageDataUrl = null;
+  selectedImageFile = null;
+  if (selectedImageObjectUrl) {
+    URL.revokeObjectURL(selectedImageObjectUrl);
+    selectedImageObjectUrl = null;
+  }
   img.style.display = 'none';
   img.src = '';
   placeholder.style.display = 'flex';
@@ -1739,12 +1746,16 @@ async function handleImageUpload(event) {
   if (!file) return;
 
   try {
-    const dataUrl = await normalizeImageToJpeg(file);
     const img = document.getElementById('preview-img');
     const placeholder = document.getElementById('cam-placeholder');
     const zone = document.getElementById('camera-zone');
-    selectedImageDataUrl = dataUrl;
-    img.src = dataUrl;
+    selectedImageDataUrl = null;
+    selectedImageFile = file;
+    if (selectedImageObjectUrl) {
+      URL.revokeObjectURL(selectedImageObjectUrl);
+    }
+    selectedImageObjectUrl = URL.createObjectURL(file);
+    img.src = selectedImageObjectUrl;
     img.style.display = 'block';
     placeholder.style.display = 'none';
     zone.classList.add('has-image');
@@ -1752,16 +1763,31 @@ async function handleImageUpload(event) {
   } catch (err) {
     console.error(err);
     selectedImageDataUrl = null;
+    selectedImageFile = null;
     showToast('❌ Could not process that photo');
   } finally {
-    // Reset only after the file has been processed so mobile gallery picks are preserved.
+    // Reset after storing the file so selecting the same photo again still works.
     event.target.value = '';
   }
 }
 
 async function analyzeFood() {
   const description = document.getElementById('food-description').value.trim();
-  const imgSrc = selectedImageDataUrl;
+  let imgSrc = selectedImageDataUrl;
+
+  if (!imgSrc && selectedImageFile) {
+    document.getElementById('loading-overlay').classList.add('active');
+    try {
+      imgSrc = await normalizeImageToJpeg(selectedImageFile);
+      selectedImageDataUrl = imgSrc;
+    } catch (err) {
+      console.error(err);
+      document.getElementById('loading-overlay').classList.remove('active');
+      showToast('❌ Could not process that photo');
+      return;
+    }
+    document.getElementById('loading-overlay').classList.remove('active');
+  }
 
   if (!description && !imgSrc) {
     showToast('📝 Add a photo or description first');
