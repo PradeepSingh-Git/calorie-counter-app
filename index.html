@@ -1687,6 +1687,8 @@ function handleImageUpload(event) {
     document.getElementById('photo-hint-wrap').style.display = 'block';
   };
   reader.readAsDataURL(file);
+  // Reset so selecting the same file again still triggers onchange
+  event.target.value = '';
 }
 
 async function analyzeFood() {
