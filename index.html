@@ -1917,7 +1917,7 @@ async function addToLog(meal) {
     protein: meal.protein, carbs: meal.carbs, fat: meal.fat,
     emoji: meal.emoji, logged_at: now.toISOString()
   });
-  if (error) { showToast('❌ Failed to save meal'); return; }
+  if (error) { showToast('❌ ' + error.message); console.error('meal_logs insert error:', error); return; }
 
   const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   state.meals.unshift({ ...meal, time: timeStr });
