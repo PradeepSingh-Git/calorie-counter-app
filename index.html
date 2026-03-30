@@ -691,7 +691,14 @@
     width: 100%;
   }
 
-  #fileInput { display: none; }
+  #fileInput {
+    position: fixed;
+    top: -200px;
+    left: -200px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+  }
 
   .photo-pick-btn {
     width: 100%;
@@ -1374,9 +1381,9 @@
           <img id="preview-img" style="display:none" />
         </div>
         <input type="file" id="fileInput" accept="image/*" onchange="handleImageUpload(event)" />
-        <button class="photo-pick-btn" id="photo-pick-btn" onclick="document.getElementById('fileInput').click()">
+        <label for="fileInput" class="photo-pick-btn" id="photo-pick-btn">
           📷 Take / Choose Photo
-        </button>
+        </label>
       </div>
 
       <div class="photo-hint-wrap" id="photo-hint-wrap" style="display:none">
@@ -1703,7 +1710,7 @@ function resetImageZone() {
   placeholder.style.display = 'flex';
   zone.classList.remove('has-image');
   document.getElementById('fileInput').value = '';
-  document.getElementById('photo-pick-btn').textContent = '📷 Take / Choose Photo';
+  document.getElementById('photo-pick-btn').innerHTML = '📷 Take / Choose Photo';
   document.getElementById('photo-hint-wrap').style.display = 'none';
   document.getElementById('photo-hint').value = '';
 }
@@ -1724,7 +1731,7 @@ function showSelectedImagePreview() {
   img.style.display = 'block';
   placeholder.style.display = 'none';
   zone.classList.add('has-image');
-  document.getElementById('photo-pick-btn').textContent = '🔄 Change Photo';
+  document.getElementById('photo-pick-btn').innerHTML = '🔄 Change Photo';
   document.getElementById('photo-hint-wrap').style.display = 'block';
 }
 
