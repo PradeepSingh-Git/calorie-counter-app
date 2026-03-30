@@ -1606,8 +1606,15 @@ async function loadTodaysMeals() {
     .eq('user_id', user.id).eq('date', today)
     .order('logged_at', { ascending: false });
 
-  const list = meals || [];
-  state.meals        = list.map(m => ({ ...m, time: new Date(m.logged_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }));
+  const list = (meals || []).map(m => ({
+    ...m,
+    calories: Math.round(m.calories),
+    protein:  Math.round(m.protein),
+    carbs:    Math.round(m.carbs),
+    fat:      Math.round(m.fat),
+    time:     new Date(m.logged_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  }));
+  state.meals        = list;
   state.totalEaten   = list.reduce((s, m) => s + m.calories, 0);
   state.totalProtein = list.reduce((s, m) => s + m.protein,  0);
   state.totalCarbs   = list.reduce((s, m) => s + m.carbs,    0);
@@ -1934,20 +1941,24 @@ async function addToLog(meal) {
   const now   = new Date();
   const today = now.toISOString().split('T')[0];
 
+  const calories = Math.round(meal.calories);
+  const protein  = Math.round(meal.protein);
+  const carbs    = Math.round(meal.carbs);
+  const fat      = Math.round(meal.fat);
+
   const { error } = await sb.from('meal_logs').insert({
     user_id: user.id, date: today,
-    name: meal.name, calories: meal.calories,
-    protein: meal.protein, carbs: meal.carbs, fat: meal.fat,
+    name: meal.name, calories, protein, carbs, fat,
     emoji: meal.emoji, logged_at: now.toISOString()
   });
   if (error) { showToast('❌ ' + error.message); console.error('meal_logs insert error:', error); return; }
 
   const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  state.meals.unshift({ ...meal, time: timeStr, logged_at: now.toISOString() });
-  state.totalEaten   += meal.calories;
-  state.totalProtein += meal.protein;
-  state.totalCarbs   += meal.carbs;
-  state.totalFat     += meal.fat;
+  state.meals.unshift({ ...meal, calories, protein, carbs, fat, time: timeStr, logged_at: now.toISOString() });
+  state.totalEaten   += calories;
+  state.totalProtein += protein;
+  state.totalCarbs   += carbs;
+  state.totalFat     += fat;
 
   updateHomeScreen();
   showToast(`✅ ${meal.name} added!`);
