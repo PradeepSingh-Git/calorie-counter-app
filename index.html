@@ -692,34 +692,9 @@
   }
 
   #fileInput {
-    position: fixed;
-    top: -200px;
-    left: -200px;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
+    display: none;
   }
 
-  .photo-pick-btn {
-    width: 100%;
-    margin-top: 12px;
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text);
-    font-family: 'Satoshi', sans-serif;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: border-color 0.2s;
-  }
-
-  .photo-pick-btn:active { border-color: var(--accent); }
 
   .or-divider {
     width: 100%;
@@ -1372,18 +1347,19 @@
     </div>
     <div class="scan-body">
       <div class="camera-zone-wrapper">
-        <div class="camera-zone" id="camera-zone">
+        <label for="fileInput" class="camera-zone" id="camera-zone">
           <div class="camera-placeholder" id="cam-placeholder">
             <div class="camera-icon">📷</div>
-            <div class="camera-text">Select a photo below</div>
+            <div class="camera-text">Tap to upload a photo</div>
             <div class="camera-sub">or describe your meal below</div>
           </div>
           <img id="preview-img" style="display:none" />
-        </div>
-        <input type="file" id="fileInput" accept="image/*" onchange="handleImageUpload(event)" />
-        <label for="fileInput" class="photo-pick-btn" id="photo-pick-btn">
-          📷 Take / Choose Photo
+          <div class="camera-overlay" id="camera-overlay" style="display:none">
+            <div style="font-size:24px">🔄</div>
+            <div style="color:white;font-weight:600;font-size:14px;margin-top:8px">Change Photo</div>
+          </div>
         </label>
+        <input type="file" id="fileInput" accept="image/*" />
       </div>
 
       <div class="photo-hint-wrap" id="photo-hint-wrap" style="display:none">
@@ -1710,7 +1686,7 @@ function resetImageZone() {
   placeholder.style.display = 'flex';
   zone.classList.remove('has-image');
   document.getElementById('fileInput').value = '';
-  document.getElementById('photo-pick-btn').innerHTML = '📷 Take / Choose Photo';
+  document.getElementById('camera-overlay').style.display = 'none';
   document.getElementById('photo-hint-wrap').style.display = 'none';
   document.getElementById('photo-hint').value = '';
 }
@@ -1731,7 +1707,7 @@ function showSelectedImagePreview() {
   img.style.display = 'block';
   placeholder.style.display = 'none';
   zone.classList.add('has-image');
-  document.getElementById('photo-pick-btn').innerHTML = '🔄 Change Photo';
+  document.getElementById('camera-overlay').style.display = 'flex';
   document.getElementById('photo-hint-wrap').style.display = 'block';
 }
 
@@ -2118,6 +2094,14 @@ async function resetApp() {
 
 // Initialize
 initApp();
+
+// Attach file input listener via JS — more reliable than onchange attribute on iOS
+document.addEventListener('DOMContentLoaded', function() {
+  const fileInput = document.getElementById('fileInput');
+  if (fileInput) {
+    fileInput.addEventListener('change', handleImageUpload);
+  }
+});
 </script>
 </body>
 </html>
