@@ -1785,21 +1785,7 @@ async function analyzeFood() {
   const description = document.getElementById('food-description').value.trim();
   let imgSrc = selectedImageDataUrl;
 
-  if (!imgSrc && selectedImageFile) {
-    document.getElementById('loading-overlay').classList.add('active');
-    try {
-      imgSrc = await normalizeImageToJpeg(selectedImageFile);
-      selectedImageDataUrl = imgSrc;
-    } catch (err) {
-      console.error(err);
-      document.getElementById('loading-overlay').classList.remove('active');
-      showToast('❌ Could not process that photo');
-      return;
-    }
-    document.getElementById('loading-overlay').classList.remove('active');
-  }
-
-  if (!description && !imgSrc) {
+  if (!description && !imgSrc && !selectedImageFile) {
     showToast('📝 Add a photo or description first');
     return;
   }
@@ -1807,6 +1793,19 @@ async function analyzeFood() {
   const btn = document.getElementById('analyze-btn');
   btn.disabled = true;
   document.getElementById('loading-overlay').classList.add('active');
+
+  if (!imgSrc && selectedImageFile) {
+    try {
+      imgSrc = await normalizeImageToJpeg(selectedImageFile);
+      selectedImageDataUrl = imgSrc;
+    } catch (err) {
+      console.error(err);
+      document.getElementById('loading-overlay').classList.remove('active');
+      btn.disabled = false;
+      showToast('❌ Could not process that photo');
+      return;
+    }
+  }
 
   const photoHint = document.getElementById('photo-hint').value.trim();
 
