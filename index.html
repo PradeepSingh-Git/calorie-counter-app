@@ -1902,8 +1902,11 @@ function showResult(r) {
     </div>
   `;
 
-  // Scroll to result
-  area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // Scroll Add to Log button into view
+  setTimeout(() => {
+    const btn = area.querySelector('.add-to-log-btn');
+    if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, 100);
 }
 
 async function addToLog(meal) {
