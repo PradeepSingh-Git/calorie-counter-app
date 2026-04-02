@@ -1640,22 +1640,6 @@
         <div class="ideal-weight-value" id="profile-ideal-range">—</div>
         <div class="ideal-weight-sub" id="profile-ideal-sub">Based on your height</div>
         <div class="ideal-weight-status" id="profile-weight-status"></div>
-        <div id="profile-ai-rec" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
-          <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">🤖 AI Recommendation</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:10px">
-              <div style="font-size:11px;color:var(--text-muted)">Calorie Goal</div>
-              <div style="font-size:18px;font-weight:700;color:var(--accent);font-family:'Clash Display',sans-serif" id="profile-rec-cal">—</div>
-              <div style="font-size:11px;color:var(--text-muted)">kcal/day</div>
-            </div>
-            <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:10px">
-              <div style="font-size:11px;color:var(--text-muted)">Target Weight</div>
-              <div style="font-size:18px;font-weight:700;color:var(--accent2);font-family:'Clash Display',sans-serif" id="profile-rec-weight">—</div>
-              <div style="font-size:11px;color:var(--text-muted)">kg</div>
-            </div>
-          </div>
-          <button class="toggle-btn active" style="width:100%;margin-top:10px;padding:8px;font-size:12px" onclick="applyProfileSuggestions()">Apply Recommendations</button>
-        </div>
       </div>
 
       <div class="section-title">Personal Details</div>
@@ -1699,6 +1683,22 @@
       <div class="input-group">
         <label class="input-label">Target Weight (kg)</label>
         <input type="number" class="input-field" id="profile-target-weight" placeholder="e.g. 65" step="0.1" />
+      </div>
+      <div id="profile-ai-rec" style="display:none" class="suggestion-card">
+        <div class="suggestion-label">🤖 AI Recommendation <span style="font-size:11px;font-weight:400;color:var(--text-muted);margin-left:4px">based on your stats</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+          <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:10px">
+            <div style="font-size:11px;color:var(--text-muted)">Calorie Goal</div>
+            <div style="font-size:18px;font-weight:700;color:var(--accent);font-family:'Clash Display',sans-serif" id="profile-rec-cal">—</div>
+            <div style="font-size:11px;color:var(--text-muted)">kcal/day</div>
+          </div>
+          <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:10px">
+            <div style="font-size:11px;color:var(--text-muted)">Target Weight</div>
+            <div style="font-size:18px;font-weight:700;color:var(--accent2);font-family:'Clash Display',sans-serif" id="profile-rec-weight">—</div>
+            <div style="font-size:11px;color:var(--text-muted)">kg</div>
+          </div>
+        </div>
+        <button class="toggle-btn active" style="width:100%;margin-top:10px;padding:8px;font-size:12px" onclick="applyProfileSuggestions()">Apply Recommendations</button>
       </div>
       <button class="btn-primary" onclick="saveProfile()">Save Changes</button>
       <button class="signout-btn" onclick="resetApp()">Sign Out</button>
@@ -1800,7 +1800,7 @@ function calcIdealWeightRange(height) {
   const h = height / 100;
   const min = Math.round(18.5 * h * h);
   const max = Math.round(24.9 * h * h);
-  return { min, max, ideal: Math.round(22 * h * h) };
+  return { min, max, ideal: Math.round(23 * h * h) };
 }
 
 function getWeightStatus(weight, height) {
@@ -1811,12 +1811,11 @@ function getWeightStatus(weight, height) {
   return { label: '✓ Healthy range', cls: 'status-healthy' };
 }
 
-function calcTargetWeight(height, goalType) {
+function calcTargetWeight(weight, height, goalType) {
   const range = calcIdealWeightRange(height);
   if (!range) return null;
-  if (goalType === 'lose') return range.min;
-  if (goalType === 'gain') return range.max;
-  return range.ideal;
+  if (goalType === 'lose' || goalType === 'gain') return range.ideal; // target the healthy midpoint
+  return weight ? Math.round(weight) : range.ideal; // maintain = keep current weight
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -1966,7 +1965,7 @@ function updateSetupSuggestion() {
 
   const suggested   = calcCalorieGoal(weight, height, age, sex, goalType);
   const range       = calcIdealWeightRange(height);
-  const targetWt    = calcTargetWeight(height, goalType);
+  const targetWt    = calcTargetWeight(weight, height, goalType);
   const goalLabels  = { lose: 'to lose', gain: 'to gain', maintain: 'to maintain' };
 
   document.getElementById('suggested-cal').textContent          = suggested;
@@ -2017,7 +2016,7 @@ function goToProfile() {
     // Show AI recommendation if we have enough data
     if (state.age && state.height && state.weight) {
       const recCal = calcCalorieGoal(state.weight, state.height, state.age, state.sex, state.goalType);
-      const recWt  = calcTargetWeight(state.height, state.goalType);
+      const recWt  = calcTargetWeight(state.weight, state.height, state.goalType);
       document.getElementById('profile-rec-cal').textContent    = recCal;
       document.getElementById('profile-rec-weight').textContent = recWt ? recWt + ' kg' : '—';
       document.getElementById('profile-ai-rec').style.display   = 'block';
