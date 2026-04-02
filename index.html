@@ -1671,7 +1671,8 @@
       </div>
       <div class="input-group">
         <label class="input-label">Target Weight (kg)</label>
-        <input type="number" class="input-field" id="profile-target-weight" placeholder="e.g. 65" step="0.1" />
+        <input type="number" class="input-field" id="profile-target-weight" placeholder="e.g. 65" step="0.1"
+          oninput="if(document.getElementById('profile-ai-rec').style.display!=='none') updateProfileRecommendation()" />
       </div>
       <div class="input-group">
         <label class="input-label">Daily Calorie Goal</label>
