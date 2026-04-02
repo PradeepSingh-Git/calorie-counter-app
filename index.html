@@ -1664,9 +1664,9 @@
       <div class="input-group">
         <label class="input-label">Goal</label>
         <div class="toggle-group" id="profile-goal-group">
-          <button class="toggle-btn" id="profile-goal-lose" onclick="selectToggle(this, 'profile-goal'); updateProfileRecommendation()">Lose</button>
-          <button class="toggle-btn active" id="profile-goal-maintain" onclick="selectToggle(this, 'profile-goal'); updateProfileRecommendation()">Maintain</button>
-          <button class="toggle-btn" id="profile-goal-gain" onclick="selectToggle(this, 'profile-goal'); updateProfileRecommendation()">Gain</button>
+          <button class="toggle-btn" id="profile-goal-lose" onclick="selectToggle(this, 'profile-goal')">Lose</button>
+          <button class="toggle-btn active" id="profile-goal-maintain" onclick="selectToggle(this, 'profile-goal')">Maintain</button>
+          <button class="toggle-btn" id="profile-goal-gain" onclick="selectToggle(this, 'profile-goal')">Gain</button>
         </div>
       </div>
       <div class="input-group">
@@ -2005,13 +2005,14 @@ function goToProfile() {
 }
 
 function updateProfileRecommendation() {
-  // Recompute values but keep card hidden — only show if already visible (user clicked the button)
   if (!state.age || !state.height || !state.weight) return;
-  const goalEl  = document.querySelector('#profile-goal-group .toggle-btn.active');
-  const goalType = goalEl ? goalEl.textContent.toLowerCase() : 'maintain';
   const range   = calcIdealWeightRange(state.height);
   const idealWt = range ? range.ideal : null;
-  const recCal  = calcCalorieGoal(state.weight, state.height, state.age, state.sex, goalType);
+  // Derive goal from current weight vs ideal — independent of user-selected goal type
+  let effectiveGoal = 'maintain';
+  if (idealWt && state.weight > idealWt + 1) effectiveGoal = 'lose';
+  else if (idealWt && state.weight < idealWt - 1) effectiveGoal = 'gain';
+  const recCal = calcCalorieGoal(state.weight, state.height, state.age, state.sex, effectiveGoal);
   document.getElementById('profile-rec-cal').textContent    = recCal;
   document.getElementById('profile-rec-weight').textContent = idealWt ? idealWt + ' kg' : '—';
 }
