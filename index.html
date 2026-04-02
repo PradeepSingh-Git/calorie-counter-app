@@ -2109,7 +2109,7 @@ async function completeSetup() {
   const weight       = parseFloat(document.getElementById('setup-weight').value) || null;
   const targetWeight = parseFloat(document.getElementById('setup-target-weight').value) || null;
   const sex          = document.getElementById('setup-sex-female').classList.contains('active') ? 'female' : 'male';
-  const goalEl       = document.querySelector('#screen-setup .toggle-group:nth-of-type(2) .toggle-btn.active');
+  const goalEl       = document.querySelector('#setup-goal-group .toggle-btn.active');
   const goalType     = goalEl ? goalEl.textContent.toLowerCase() : 'maintain';
 
   const { data: { user } } = await sb.auth.getUser();
