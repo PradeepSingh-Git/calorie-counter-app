@@ -1101,6 +1101,142 @@
     width: 18px;
   }
 
+  /* PROFILE SCREEN */
+  .profile-header {
+    padding: 54px 24px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .profile-body {
+    flex: 1;
+    padding: 0 24px 120px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .profile-avatar {
+    width: 72px; height: 72px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Clash Display', sans-serif;
+    font-size: 28px; font-weight: 700;
+    color: var(--bg);
+    flex-shrink: 0;
+  }
+
+  .ideal-weight-card {
+    background: rgba(181,242,60,0.08);
+    border: 1px solid rgba(181,242,60,0.2);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+
+  .ideal-weight-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .ideal-weight-value {
+    font-family: 'Clash Display', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .ideal-weight-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .ideal-weight-status {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .status-healthy { background: rgba(94,255,160,0.15); color: var(--accent2); }
+  .status-above   { background: rgba(255,107,107,0.15); color: var(--danger); }
+  .status-below   { background: rgba(242,201,76,0.15); color: var(--accent3); }
+
+  .section-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .signout-btn {
+    width: 100%;
+    background: transparent;
+    border: 1.5px solid var(--danger);
+    border-radius: var(--radius);
+    padding: 16px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Clash Display', sans-serif;
+    color: var(--danger);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+
+  .signout-btn:hover { background: rgba(255,107,107,0.1); }
+
+  /* SETUP SUGGESTION CARD */
+  .suggestion-card {
+    background: rgba(181,242,60,0.08);
+    border: 1px solid rgba(181,242,60,0.2);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+  }
+
+  .suggestion-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .suggestion-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .suggestion-value {
+    font-family: 'Clash Display', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .suggestion-desc { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+  .inline-fields {
+    display: flex;
+    gap: 12px;
+  }
+
+  .inline-fields .input-group { flex: 1; }
+
   /* SCROLLBAR */
   ::-webkit-scrollbar { width: 0; }
 
@@ -1245,13 +1381,8 @@
   <!-- SETUP -->
   <div id="screen-setup" class="screen">
     <div class="setup-header">
-      <div class="setup-step">Setup • Step 1 of 1</div>
+      <div class="setup-step">Almost there</div>
       <h2>Tell us about<br>yourself</h2>
-      <div class="progress-dots" style="margin-top:12px">
-        <div class="dot active"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
-      </div>
     </div>
     <div class="setup-body">
       <div class="input-group">
@@ -1259,22 +1390,46 @@
         <input type="text" class="input-field" id="setup-name" placeholder="e.g. Alex" />
       </div>
       <div class="input-group">
-        <label class="input-label">Age</label>
-        <input type="number" class="input-field" id="setup-age" placeholder="25" min="10" max="100" />
-      </div>
-      <div class="input-group">
         <label class="input-label">Sex</label>
         <div class="toggle-group">
-          <button class="toggle-btn active" onclick="selectToggle(this, 'sex')">Male</button>
-          <button class="toggle-btn" onclick="selectToggle(this, 'sex')">Female</button>
+          <button class="toggle-btn active" id="setup-sex-male" onclick="selectToggle(this, 'sex')">Male</button>
+          <button class="toggle-btn" id="setup-sex-female" onclick="selectToggle(this, 'sex')">Female</button>
+        </div>
+      </div>
+      <div class="inline-fields">
+        <div class="input-group">
+          <label class="input-label">Age</label>
+          <input type="number" class="input-field" id="setup-age" placeholder="25" min="10" max="100" />
+        </div>
+        <div class="input-group">
+          <label class="input-label">Height (cm)</label>
+          <input type="number" class="input-field" id="setup-height" placeholder="170" min="100" max="250" />
         </div>
       </div>
       <div class="input-group">
-        <label class="input-label">Goal</label>
+        <label class="input-label">Current Weight (kg)</label>
+        <input type="number" class="input-field" id="setup-weight" placeholder="70" min="30" max="300" step="0.1" />
+      </div>
+      <div class="input-group">
+        <label class="input-label">Your Goal</label>
         <div class="toggle-group">
-          <button class="toggle-btn active" onclick="selectToggle(this, 'goal')">Lose</button>
-          <button class="toggle-btn" onclick="selectToggle(this, 'goal')">Maintain</button>
-          <button class="toggle-btn" onclick="selectToggle(this, 'goal')">Gain</button>
+          <button class="toggle-btn" id="setup-goal-lose" onclick="selectToggle(this, 'goal_type')">Lose</button>
+          <button class="toggle-btn active" id="setup-goal-maintain" onclick="selectToggle(this, 'goal_type')">Maintain</button>
+          <button class="toggle-btn" id="setup-goal-gain" onclick="selectToggle(this, 'goal_type')">Gain</button>
+        </div>
+      </div>
+      <div id="setup-suggestion" style="display:none" class="suggestion-card">
+        <div class="suggestion-label">✨ Suggested for you</div>
+        <div class="suggestion-row">
+          <div>
+            <div class="suggestion-value" id="suggested-cal">—</div>
+            <div class="suggestion-desc">kcal / day based on your stats</div>
+          </div>
+          <button class="toggle-btn active" style="flex:0;padding:10px 16px;font-size:13px" onclick="useSuggestedCalories()">Use this</button>
+        </div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+          <div class="suggestion-label" style="color:var(--accent2)">⚖️ Ideal Weight Range</div>
+          <div class="suggestion-value" id="ideal-weight-range" style="font-size:18px;margin-top:4px">—</div>
         </div>
       </div>
       <div class="input-group">
@@ -1294,7 +1449,7 @@
         <div class="home-greeting" id="greeting">Good morning</div>
         <div class="home-name" id="home-name">Alex</div>
       </div>
-      <button class="avatar-btn" id="avatar-btn" onclick="resetApp()">A</button>
+      <button class="avatar-btn" id="avatar-btn" onclick="goToProfile()">A</button>
     </div>
 
     <div class="ring-section">
@@ -1456,6 +1611,71 @@
     </div>
   </div>
 
+  <!-- PROFILE SCREEN -->
+  <div id="screen-profile" class="screen">
+    <div class="profile-header">
+      <button class="back-btn" onclick="goToHome()" style="background:var(--surface);border:1px solid var(--border);">←</button>
+      <h2>My Profile</h2>
+    </div>
+    <div class="profile-body">
+      <div style="display:flex;align-items:center;gap:16px">
+        <div class="profile-avatar" id="profile-avatar">A</div>
+        <div>
+          <div style="font-size:20px;font-weight:700;font-family:'Clash Display',sans-serif" id="profile-display-name">—</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:2px" id="profile-display-email">—</div>
+        </div>
+      </div>
+
+      <div id="profile-ideal-card" class="ideal-weight-card" style="display:none">
+        <div class="ideal-weight-title">⚖️ Ideal Weight Range</div>
+        <div class="ideal-weight-value" id="profile-ideal-range">—</div>
+        <div class="ideal-weight-sub" id="profile-ideal-sub">Based on your height</div>
+        <div class="ideal-weight-status" id="profile-weight-status"></div>
+      </div>
+
+      <div class="section-title">Personal Details</div>
+      <div class="input-group">
+        <label class="input-label">Name</label>
+        <input type="text" class="input-field" id="profile-name" placeholder="Your name" />
+      </div>
+      <div class="input-group">
+        <label class="input-label">Sex</label>
+        <div class="toggle-group">
+          <button class="toggle-btn active" id="profile-sex-male" onclick="selectToggle(this, 'profile-sex')">Male</button>
+          <button class="toggle-btn" id="profile-sex-female" onclick="selectToggle(this, 'profile-sex')">Female</button>
+        </div>
+      </div>
+      <div class="inline-fields">
+        <div class="input-group">
+          <label class="input-label">Age</label>
+          <input type="number" class="input-field" id="profile-age" placeholder="25" min="10" max="100" />
+        </div>
+        <div class="input-group">
+          <label class="input-label">Height (cm)</label>
+          <input type="number" class="input-field" id="profile-height" placeholder="170" />
+        </div>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Current Weight (kg)</label>
+        <input type="number" class="input-field" id="profile-weight" placeholder="70" step="0.1" />
+      </div>
+      <div class="input-group">
+        <label class="input-label">Goal</label>
+        <div class="toggle-group">
+          <button class="toggle-btn" id="profile-goal-lose" onclick="selectToggle(this, 'profile-goal')">Lose</button>
+          <button class="toggle-btn active" id="profile-goal-maintain" onclick="selectToggle(this, 'profile-goal')">Maintain</button>
+          <button class="toggle-btn" id="profile-goal-gain" onclick="selectToggle(this, 'profile-goal')">Gain</button>
+        </div>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Daily Calorie Goal</label>
+        <input type="number" class="input-field" id="profile-calories" placeholder="2000" />
+      </div>
+      <button class="btn-primary" onclick="saveProfile()">Save Changes</button>
+      <button class="signout-btn" onclick="resetApp()">Sign Out</button>
+    </div>
+  </div>
+
   <!-- BOTTOM NAV (only shown after setup) -->
   <div class="bottom-nav" id="bottom-nav" style="display:none">
     <button class="nav-item active" onclick="switchTab('home', this)">
@@ -1515,6 +1735,11 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 let state = {
   name: 'Alex',
   goal: 2000,
+  age: null,
+  height: null,
+  weight: null,
+  sex: 'male',
+  goalType: 'maintain',
   meals: [],
   totalEaten: 0,
   totalProtein: 0,
@@ -1522,6 +1747,40 @@ let state = {
   totalFat: 0,
   totalFiber: 0
 };
+
+// ─── HEALTH CALCULATIONS ─────────────────────────────────────────────────────
+function calcBMR(weight, height, age, sex) {
+  if (!weight || !height || !age) return null;
+  return sex === 'female'
+    ? (10 * weight) + (6.25 * height) - (5 * age) - 161
+    : (10 * weight) + (6.25 * height) - (5 * age) + 5;
+}
+
+function calcCalorieGoal(weight, height, age, sex, goalType) {
+  const bmr = calcBMR(weight, height, age, sex);
+  if (!bmr) return 2000;
+  const tdee = Math.round(bmr * 1.55); // moderate activity
+  if (goalType === 'lose')     return Math.max(tdee - 500, 1200);
+  if (goalType === 'gain')     return tdee + 500;
+  return tdee;
+}
+
+function calcIdealWeightRange(height) {
+  if (!height) return null;
+  const h = height / 100;
+  const min = Math.round(18.5 * h * h);
+  const max = Math.round(24.9 * h * h);
+  return { min, max, ideal: Math.round(22 * h * h) };
+}
+
+function getWeightStatus(weight, height) {
+  if (!weight || !height) return null;
+  const bmi = weight / ((height / 100) ** 2);
+  if (bmi < 18.5) return { label: '↓ Below healthy range', cls: 'status-below' };
+  if (bmi > 24.9) return { label: '↑ Above healthy range', cls: 'status-above' };
+  return { label: '✓ Healthy range', cls: 'status-healthy' };
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 const MEAL_EMOJIS = ['🍕','🥗','🍜','🍱','🥩','🥑','🍳','🥙','🌯','🍚','🥞','🍝','🥦','🐟','🍗','🥚','🫕','🥘'];
 let selectedImageDataUrl = null;
@@ -1595,8 +1854,14 @@ async function loadUserData(user) {
   const { data: profile } = await sb.from('profiles').select('*').eq('id', user.id).single();
   if (!profile) { showScreen('screen-onboard'); return; }
 
-  state.name = profile.name;
-  state.goal = profile.goal_calories;
+  state.name     = profile.name;
+  state.goal     = profile.goal_calories;
+  state.age      = profile.age || null;
+  state.height   = profile.height_cm || null;
+  state.weight   = profile.weight_kg || null;
+  state.sex      = profile.sex || 'male';
+  state.goalType = profile.goal_type || 'maintain';
+  state.email    = user.email;
 
   await loadTodaysMeals();
   applyProfileToUI();
@@ -1641,6 +1906,100 @@ function applyProfileToUI() {
 
 function goToSetup() {
   showScreen('screen-setup');
+  // Attach live suggestion recalculation
+  ['setup-age','setup-height','setup-weight'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updateSetupSuggestion);
+  });
+  document.querySelectorAll('#screen-setup .toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => setTimeout(updateSetupSuggestion, 50));
+  });
+}
+
+function updateSetupSuggestion() {
+  const age    = parseInt(document.getElementById('setup-age').value);
+  const height = parseInt(document.getElementById('setup-height').value);
+  const weight = parseFloat(document.getElementById('setup-weight').value);
+  const sex    = document.getElementById('setup-sex-female').classList.contains('active') ? 'female' : 'male';
+  const goalEl = document.querySelector('#screen-setup .toggle-group:nth-of-type(2) .toggle-btn.active');
+  const goalType = goalEl ? goalEl.textContent.toLowerCase() : 'maintain';
+
+  if (!age || !height || !weight) { document.getElementById('setup-suggestion').style.display = 'none'; return; }
+
+  const suggested = calcCalorieGoal(weight, height, age, sex, goalType);
+  const range     = calcIdealWeightRange(height);
+
+  document.getElementById('suggested-cal').textContent      = suggested + ' kcal';
+  document.getElementById('ideal-weight-range').textContent = range ? `${range.min} – ${range.max} kg` : '—';
+  document.getElementById('setup-suggestion').style.display = 'block';
+}
+
+function useSuggestedCalories() {
+  const val = document.getElementById('suggested-cal').textContent.replace(' kcal','');
+  document.getElementById('setup-calories').value = val;
+}
+
+function goToProfile() {
+  // Populate profile screen with current state
+  document.getElementById('profile-name').value    = state.name || '';
+  document.getElementById('profile-age').value     = state.age || '';
+  document.getElementById('profile-height').value  = state.height || '';
+  document.getElementById('profile-weight').value  = state.weight || '';
+  document.getElementById('profile-calories').value = state.goal || 2000;
+  document.getElementById('profile-display-name').textContent  = state.name || '—';
+  document.getElementById('profile-display-email').textContent = state.email || '—';
+  document.getElementById('profile-avatar').textContent = (state.name || 'U')[0].toUpperCase();
+
+  // Sex toggle
+  document.getElementById('profile-sex-male').classList.toggle('active', state.sex !== 'female');
+  document.getElementById('profile-sex-female').classList.toggle('active', state.sex === 'female');
+
+  // Goal toggle
+  ['lose','maintain','gain'].forEach(g => {
+    document.getElementById('profile-goal-' + g).classList.toggle('active', state.goalType === g);
+  });
+
+  // Ideal weight card
+  const range  = calcIdealWeightRange(state.height);
+  const status = getWeightStatus(state.weight, state.height);
+  if (range && status) {
+    document.getElementById('profile-ideal-range').textContent = `${range.min} – ${range.max} kg`;
+    document.getElementById('profile-ideal-sub').textContent   = `Your ideal is ~${range.ideal} kg`;
+    document.getElementById('profile-weight-status').textContent  = status.label;
+    document.getElementById('profile-weight-status').className     = 'ideal-weight-status ' + status.cls;
+    document.getElementById('profile-ideal-card').style.display    = 'block';
+  } else {
+    document.getElementById('profile-ideal-card').style.display = 'none';
+  }
+
+  showScreen('screen-profile');
+}
+
+async function saveProfile() {
+  const name     = document.getElementById('profile-name').value.trim() || 'Friend';
+  const age      = parseInt(document.getElementById('profile-age').value) || null;
+  const height   = parseInt(document.getElementById('profile-height').value) || null;
+  const weight   = parseFloat(document.getElementById('profile-weight').value) || null;
+  const calories = parseInt(document.getElementById('profile-calories').value) || 2000;
+  const sex      = document.getElementById('profile-sex-female').classList.contains('active') ? 'female' : 'male';
+  const goalEl   = document.querySelector('#screen-profile .toggle-group:nth-of-type(1) .toggle-btn.active');
+  const goalType = goalEl ? goalEl.textContent.toLowerCase() : 'maintain';
+
+  const { data: { user } } = await sb.auth.getUser();
+  const { error } = await sb.from('profiles').upsert({
+    id: user.id, name, goal_calories: calories,
+    age, height_cm: height, weight_kg: weight, sex, goal_type: goalType
+  });
+  if (error) { showToast('❌ Failed to save'); return; }
+
+  state.name = name; state.goal = calories;
+  state.age = age; state.height = height; state.weight = weight;
+  state.sex = sex; state.goalType = goalType;
+  applyProfileToUI();
+  document.getElementById('goal-display').textContent  = calories;
+  document.getElementById('remaining-cal').textContent = Math.max(calories - state.totalEaten, 0);
+  updateRing();
+  showToast('✅ Profile saved!');
+  goToHome();
 }
 
 function selectToggle(btn, group) {
@@ -1652,13 +2011,23 @@ function selectToggle(btn, group) {
 async function completeSetup() {
   const name     = document.getElementById('setup-name').value.trim() || 'Friend';
   const calories = parseInt(document.getElementById('setup-calories').value) || 2000;
-  const { data: { user } } = await sb.auth.getUser();
+  const age      = parseInt(document.getElementById('setup-age').value) || null;
+  const height   = parseInt(document.getElementById('setup-height').value) || null;
+  const weight   = parseFloat(document.getElementById('setup-weight').value) || null;
+  const sex      = document.getElementById('setup-sex-female').classList.contains('active') ? 'female' : 'male';
+  const goalEl   = document.querySelector('#screen-setup .toggle-group:nth-of-type(2) .toggle-btn.active');
+  const goalType = goalEl ? goalEl.textContent.toLowerCase() : 'maintain';
 
-  const { error } = await sb.from('profiles').upsert({ id: user.id, name, goal_calories: calories });
+  const { data: { user } } = await sb.auth.getUser();
+  const { error } = await sb.from('profiles').upsert({
+    id: user.id, name, goal_calories: calories,
+    age, height_cm: height, weight_kg: weight, sex, goal_type: goalType
+  });
   if (error) { showToast('❌ Failed to save profile'); return; }
 
-  state.name = name;
-  state.goal = calories;
+  state.name = name; state.goal = calories;
+  state.age = age; state.height = height; state.weight = weight;
+  state.sex = sex; state.goalType = goalType;
   applyProfileToUI();
   document.getElementById('goal-display').textContent   = calories;
   document.getElementById('remaining-cal').textContent  = calories;
@@ -2196,15 +2565,13 @@ function showToast(msg) {
 }
 
 async function resetApp() {
-  if (confirm('Sign out?')) {
-    await sb.auth.signOut();
-    state = { name: 'Alex', goal: 2000, meals: [], totalEaten: 0, totalProtein: 0, totalCarbs: 0, totalFat: 0, totalFiber: 0 };
-    document.getElementById('bottom-nav').style.display = 'none';
-    document.getElementById('auth-email').value    = '';
-    document.getElementById('auth-password').value = '';
-    document.getElementById('auth-message').style.display = 'none';
-    showScreen('screen-auth');
-  }
+  await sb.auth.signOut();
+  state = { name: 'Alex', goal: 2000, age: null, height: null, weight: null, sex: 'male', goalType: 'maintain', meals: [], totalEaten: 0, totalProtein: 0, totalCarbs: 0, totalFat: 0, totalFiber: 0 };
+  document.getElementById('bottom-nav').style.display = 'none';
+  document.getElementById('auth-email').value    = '';
+  document.getElementById('auth-password').value = '';
+  document.getElementById('auth-message').style.display = 'none';
+  showScreen('screen-auth');
 }
 
 // Initialize
