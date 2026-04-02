@@ -1412,11 +1412,16 @@
       </div>
       <div class="input-group">
         <label class="input-label">Your Goal</label>
-        <div class="toggle-group">
-          <button class="toggle-btn" id="setup-goal-lose" onclick="selectToggle(this, 'goal_type')">Lose</button>
-          <button class="toggle-btn active" id="setup-goal-maintain" onclick="selectToggle(this, 'goal_type')">Maintain</button>
-          <button class="toggle-btn" id="setup-goal-gain" onclick="selectToggle(this, 'goal_type')">Gain</button>
+        <div class="toggle-group" id="setup-goal-group">
+          <button class="toggle-btn" id="setup-goal-lose" onclick="selectToggle(this, 'goal_type'); updateSetupSuggestion()">Lose</button>
+          <button class="toggle-btn active" id="setup-goal-maintain" onclick="selectToggle(this, 'goal_type'); updateSetupSuggestion()">Maintain</button>
+          <button class="toggle-btn" id="setup-goal-gain" onclick="selectToggle(this, 'goal_type'); updateSetupSuggestion()">Gain</button>
         </div>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Target Weight (kg)</label>
+        <input type="number" class="input-field" id="setup-target-weight" placeholder="e.g. 65" min="30" max="300" step="0.1"
+          oninput="updateSetupSuggestion()" />
       </div>
       <div id="setup-suggestion" style="display:none" class="suggestion-card">
         <div class="suggestion-label">🤖 AI Recommendation <span style="font-size:11px;font-weight:400;color:var(--text-muted);margin-left:4px">based on your stats</span></div>
@@ -1440,10 +1445,6 @@
       <div class="input-group">
         <label class="input-label">Daily Calorie Goal</label>
         <input type="number" class="input-field" id="setup-calories" placeholder="2000" min="1000" max="5000" />
-      </div>
-      <div class="input-group">
-        <label class="input-label">Target Weight (kg)</label>
-        <input type="number" class="input-field" id="setup-target-weight" placeholder="e.g. 65" min="30" max="300" step="0.1" />
       </div>
     </div>
     <div class="setup-footer">
@@ -1939,33 +1940,46 @@ function applyProfileToUI() {
 
 function goToSetup() {
   showScreen('screen-setup');
-  // Attach live suggestion recalculation
-  ['setup-age','setup-height','setup-weight'].forEach(id => {
+  ['setup-age','setup-height','setup-weight','setup-target-weight'].forEach(id => {
     document.getElementById(id).addEventListener('input', updateSetupSuggestion);
-  });
-  document.querySelectorAll('#screen-setup .toggle-btn').forEach(btn => {
-    btn.addEventListener('click', () => setTimeout(updateSetupSuggestion, 50));
   });
 }
 
 function updateSetupSuggestion() {
-  const age    = parseInt(document.getElementById('setup-age').value);
-  const height = parseInt(document.getElementById('setup-height').value);
-  const weight = parseFloat(document.getElementById('setup-weight').value);
-  const sex    = document.getElementById('setup-sex-female').classList.contains('active') ? 'female' : 'male';
-  const goalEl = document.querySelector('#screen-setup .toggle-group:nth-of-type(2) .toggle-btn.active');
-  const goalType = goalEl ? goalEl.textContent.toLowerCase() : 'maintain';
+  const age         = parseInt(document.getElementById('setup-age').value);
+  const height      = parseInt(document.getElementById('setup-height').value);
+  const weight      = parseFloat(document.getElementById('setup-weight').value);
+  const enteredTarget = parseFloat(document.getElementById('setup-target-weight').value) || null;
+  const sex         = document.getElementById('setup-sex-female').classList.contains('active') ? 'female' : 'male';
+  const goalEl      = document.querySelector('#setup-goal-group .toggle-btn.active');
+  const goalType    = goalEl ? goalEl.textContent.toLowerCase() : 'maintain';
 
   if (!age || !height || !weight) { document.getElementById('setup-suggestion').style.display = 'none'; return; }
 
-  const suggested   = calcCalorieGoal(weight, height, age, sex, goalType);
-  const range       = calcIdealWeightRange(height);
-  const targetWt    = calcTargetWeight(weight, height, goalType);
-  const goalLabels  = { lose: 'to lose', gain: 'to gain', maintain: 'to maintain' };
+  const range   = calcIdealWeightRange(height);
+  const idealWt = range ? range.ideal : null;
 
-  document.getElementById('suggested-cal').textContent          = suggested;
-  document.getElementById('suggested-target-weight').textContent = targetWt ? targetWt : '—';
-  document.getElementById('suggested-target-desc').textContent   = targetWt ? `kg (${goalLabels[goalType] || ''})` : 'kg';
+  // Derive effective goal and display target
+  let effectiveGoal, displayTarget;
+  if (enteredTarget) {
+    // Use current vs entered target weight
+    displayTarget = enteredTarget;
+    if (weight > enteredTarget + 1)      effectiveGoal = 'lose';
+    else if (weight < enteredTarget - 1) effectiveGoal = 'gain';
+    else                                  effectiveGoal = 'maintain';
+  } else {
+    // Fall back: compare current vs ideal weight (same as profile page)
+    displayTarget = idealWt;
+    if (idealWt && weight > idealWt + 1)      effectiveGoal = 'lose';
+    else if (idealWt && weight < idealWt - 1) effectiveGoal = 'gain';
+    else                                       effectiveGoal = 'maintain';
+  }
+
+  const suggested = calcCalorieGoal(weight, height, age, sex, effectiveGoal);
+
+  document.getElementById('suggested-cal').textContent           = suggested;
+  document.getElementById('suggested-target-weight').textContent = displayTarget || '—';
+  document.getElementById('suggested-target-desc').textContent   = 'kg';
   document.getElementById('ideal-weight-range').textContent      = range ? `${range.min} – ${range.max} kg` : '—';
   document.getElementById('setup-suggestion').style.display      = 'block';
 }
