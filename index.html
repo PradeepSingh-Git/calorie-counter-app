@@ -1977,6 +1977,11 @@ function updateSetupSuggestion() {
 
   const suggested = calcCalorieGoal(weight, height, age, sex, effectiveGoal);
 
+  // Auto-select goal type toggle
+  ['lose','maintain','gain'].forEach(g => {
+    document.getElementById('setup-goal-' + g).classList.toggle('active', g === effectiveGoal);
+  });
+
   document.getElementById('suggested-cal').textContent           = suggested;
   document.getElementById('suggested-target-weight').textContent = displayTarget || '—';
   document.getElementById('suggested-target-desc').textContent   = 'kg';
@@ -2034,6 +2039,12 @@ function updateProfileRecommendation() {
   else if (targetWt && state.weight < targetWt - 1) effectiveGoal = 'gain';
 
   const recCal = calcCalorieGoal(state.weight, state.height, state.age, state.sex, effectiveGoal);
+
+  // Auto-select goal type toggle
+  ['lose','maintain','gain'].forEach(g => {
+    document.getElementById('profile-goal-' + g).classList.toggle('active', g === effectiveGoal);
+  });
+
   document.getElementById('profile-rec-cal').textContent    = recCal;
   document.getElementById('profile-rec-weight').textContent = targetWt ? targetWt + ' kg' : '—';
 }
