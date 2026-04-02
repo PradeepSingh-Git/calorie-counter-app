@@ -1635,13 +1635,6 @@
         </div>
       </div>
 
-      <div id="profile-ideal-card" class="ideal-weight-card" style="display:none">
-        <div class="ideal-weight-title">⚖️ Ideal Weight Range</div>
-        <div class="ideal-weight-value" id="profile-ideal-range">—</div>
-        <div class="ideal-weight-sub" id="profile-ideal-sub">Based on your height</div>
-        <div class="ideal-weight-status" id="profile-weight-status"></div>
-      </div>
-
       <div class="section-title">Personal Details</div>
       <div class="input-group">
         <label class="input-label">Name</label>
@@ -1670,10 +1663,10 @@
       </div>
       <div class="input-group">
         <label class="input-label">Goal</label>
-        <div class="toggle-group">
-          <button class="toggle-btn" id="profile-goal-lose" onclick="selectToggle(this, 'profile-goal')">Lose</button>
-          <button class="toggle-btn active" id="profile-goal-maintain" onclick="selectToggle(this, 'profile-goal')">Maintain</button>
-          <button class="toggle-btn" id="profile-goal-gain" onclick="selectToggle(this, 'profile-goal')">Gain</button>
+        <div class="toggle-group" id="profile-goal-group">
+          <button class="toggle-btn" id="profile-goal-lose" onclick="selectToggle(this, 'profile-goal'); updateProfileRecommendation()">Lose</button>
+          <button class="toggle-btn active" id="profile-goal-maintain" onclick="selectToggle(this, 'profile-goal'); updateProfileRecommendation()">Maintain</button>
+          <button class="toggle-btn" id="profile-goal-gain" onclick="selectToggle(this, 'profile-goal'); updateProfileRecommendation()">Gain</button>
         </div>
       </div>
       <div class="input-group">
@@ -2003,31 +1996,24 @@ function goToProfile() {
     document.getElementById('profile-goal-' + g).classList.toggle('active', state.goalType === g);
   });
 
-  // Ideal weight card + AI recommendation
-  const range  = calcIdealWeightRange(state.height);
-  const status = getWeightStatus(state.weight, state.height);
-  if (range && status) {
-    document.getElementById('profile-ideal-range').textContent    = `${range.min} – ${range.max} kg`;
-    document.getElementById('profile-ideal-sub').textContent      = `Your ideal is ~${range.ideal} kg`;
-    document.getElementById('profile-weight-status').textContent  = status.label;
-    document.getElementById('profile-weight-status').className    = 'ideal-weight-status ' + status.cls;
-    document.getElementById('profile-ideal-card').style.display   = 'block';
-
-    // Show AI recommendation if we have enough data
-    if (state.age && state.height && state.weight) {
-      const recCal = calcCalorieGoal(state.weight, state.height, state.age, state.sex, state.goalType);
-      const recWt  = calcTargetWeight(state.weight, state.height, state.goalType);
-      document.getElementById('profile-rec-cal').textContent    = recCal;
-      document.getElementById('profile-rec-weight').textContent = recWt ? recWt + ' kg' : '—';
-      document.getElementById('profile-ai-rec').style.display   = 'block';
-    } else {
-      document.getElementById('profile-ai-rec').style.display   = 'none';
-    }
-  } else {
-    document.getElementById('profile-ideal-card').style.display = 'none';
-  }
+  updateProfileRecommendation();
 
   showScreen('screen-profile');
+}
+
+function updateProfileRecommendation() {
+  if (!state.age || !state.height || !state.weight) {
+    document.getElementById('profile-ai-rec').style.display = 'none';
+    return;
+  }
+  const goalEl  = document.querySelector('#profile-goal-group .toggle-btn.active');
+  const goalType = goalEl ? goalEl.textContent.toLowerCase() : 'maintain';
+  const range   = calcIdealWeightRange(state.height);
+  const idealWt = range ? range.ideal : null;
+  const recCal  = calcCalorieGoal(state.weight, state.height, state.age, state.sex, goalType);
+  document.getElementById('profile-rec-cal').textContent    = recCal;
+  document.getElementById('profile-rec-weight').textContent = idealWt ? idealWt + ' kg' : '—';
+  document.getElementById('profile-ai-rec').style.display   = 'block';
 }
 
 function applyProfileSuggestions() {
@@ -2045,7 +2031,7 @@ async function saveProfile() {
   const targetWeight = parseFloat(document.getElementById('profile-target-weight').value) || null;
   const calories     = parseInt(document.getElementById('profile-calories').value) || 2000;
   const sex          = document.getElementById('profile-sex-female').classList.contains('active') ? 'female' : 'male';
-  const goalEl       = document.querySelector('#screen-profile .toggle-group:nth-of-type(1) .toggle-btn.active');
+  const goalEl       = document.querySelector('#profile-goal-group .toggle-btn.active');
   const goalType     = goalEl ? goalEl.textContent.toLowerCase() : 'maintain';
 
   const { data: { user } } = await sb.auth.getUser();
