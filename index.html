@@ -21,6 +21,7 @@
     --protein: #60b8ff;
     --carbs: #f2c94c;
     --fat: #ff9a5c;
+    --fiber: #a78bfa;
     --radius: 20px;
     --radius-sm: 12px;
   }
@@ -1329,6 +1330,11 @@
               <div class="macro-bar-bg"><div class="macro-bar-fill" id="bar-fat" style="width:0%;background:var(--fat)"></div></div>
               <div class="macro-val" id="val-fat" style="color:var(--fat)">0g</div>
             </div>
+            <div class="macro-row">
+              <div class="macro-name" style="color:var(--fiber)">Fibre</div>
+              <div class="macro-bar-bg"><div class="macro-bar-fill" id="bar-fiber" style="width:0%;background:var(--fiber)"></div></div>
+              <div class="macro-val" id="val-fiber" style="color:var(--fiber)">0g</div>
+            </div>
           </div>
         </div>
       </div>
@@ -1513,7 +1519,8 @@ let state = {
   totalEaten: 0,
   totalProtein: 0,
   totalCarbs: 0,
-  totalFat: 0
+  totalFat: 0,
+  totalFiber: 0
 };
 
 const MEAL_EMOJIS = ['🍕','🥗','🍜','🍱','🥩','🥑','🍳','🥙','🌯','🍚','🥞','🍝','🥦','🐟','🍗','🥚','🫕','🥘'];
@@ -1613,6 +1620,7 @@ async function loadTodaysMeals() {
     protein:  Math.round(m.protein),
     carbs:    Math.round(m.carbs),
     fat:      Math.round(m.fat),
+    fiber:    Math.round(m.fiber || 0),
     time:     new Date(m.logged_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   }));
   state.meals        = list;
@@ -1620,6 +1628,7 @@ async function loadTodaysMeals() {
   state.totalProtein = list.reduce((s, m) => s + m.protein,  0);
   state.totalCarbs   = list.reduce((s, m) => s + m.carbs,    0);
   state.totalFat     = list.reduce((s, m) => s + m.fat,      0);
+  state.totalFiber   = list.reduce((s, m) => s + m.fiber,    0);
 }
 
 function applyProfileToUI() {
@@ -1852,6 +1861,7 @@ async function analyzeFood() {
   "protein": 32,
   "carbs": 45,
   "fat": 12,
+  "fiber": 5,
   "emoji": "🍗",
   "tip": "A short 1-2 sentence nutrition tip about this meal and how to make it healthier or complement it well."
 }`;
@@ -1919,6 +1929,10 @@ function showResult(r) {
           <div class="rm-num" style="color:var(--fat)">${r.fat}g</div>
           <div class="rm-label">Fat</div>
         </div>
+        <div class="result-macro">
+          <div class="rm-num" style="color:var(--fiber)">${r.fiber || 0}g</div>
+          <div class="rm-label">Fibre</div>
+        </div>
       </div>
       <div class="result-tip">
         <div class="tip-label">💡 Nutrition Tip</div>
@@ -1946,20 +1960,22 @@ async function addToLog(meal) {
   const protein  = Math.round(meal.protein);
   const carbs    = Math.round(meal.carbs);
   const fat      = Math.round(meal.fat);
+  const fiber    = Math.round(meal.fiber || 0);
 
   const { error } = await sb.from('meal_logs').insert({
     user_id: user.id, date: today,
-    name: meal.name, calories, protein, carbs, fat,
+    name: meal.name, calories, protein, carbs, fat, fiber,
     emoji: meal.emoji, logged_at: now.toISOString()
   });
   if (error) { showToast('❌ ' + error.message); console.error('meal_logs insert error:', error); return; }
 
   const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  state.meals.unshift({ ...meal, calories, protein, carbs, fat, time: timeStr, logged_at: now.toISOString() });
+  state.meals.unshift({ ...meal, calories, protein, carbs, fat, fiber, time: timeStr, logged_at: now.toISOString() });
   state.totalEaten   += calories;
   state.totalProtein += protein;
   state.totalCarbs   += carbs;
   state.totalFat     += fat;
+  state.totalFiber   += fiber;
 
   updateHomeScreen();
   showToast(`✅ ${meal.name} added!`);
@@ -1985,18 +2001,22 @@ function updateRing() {
   // Macros (rough daily targets)
   const proteinGoal = (state.goal * 0.3) / 4;
   const carbGoal = (state.goal * 0.45) / 4;
-  const fatGoal = (state.goal * 0.25) / 9;
+  const fatGoal   = (state.goal * 0.25) / 9;
+  const fiberGoal = 30; // recommended daily fiber intake in grams
 
-  const pp = Math.min((state.totalProtein / proteinGoal) * 100, 100);
-  const cp = Math.min((state.totalCarbs / carbGoal) * 100, 100);
-  const fp = Math.min((state.totalFat / fatGoal) * 100, 100);
+  const pp  = Math.min((state.totalProtein / proteinGoal) * 100, 100);
+  const cp  = Math.min((state.totalCarbs / carbGoal) * 100, 100);
+  const fp  = Math.min((state.totalFat / fatGoal) * 100, 100);
+  const fip = Math.min((state.totalFiber / fiberGoal) * 100, 100);
 
   document.getElementById('bar-protein').style.width = pp + '%';
   document.getElementById('bar-carbs').style.width = cp + '%';
   document.getElementById('bar-fat').style.width = fp + '%';
+  document.getElementById('bar-fiber').style.width = fip + '%';
   document.getElementById('val-protein').textContent = state.totalProtein + 'g';
   document.getElementById('val-carbs').textContent = state.totalCarbs + 'g';
   document.getElementById('val-fat').textContent = state.totalFat + 'g';
+  document.getElementById('val-fiber').textContent = state.totalFiber + 'g';
 }
 
 function renderMealsList() {
@@ -2022,6 +2042,7 @@ function renderMealsList() {
             <div class="meal-macro"><span style="color:var(--protein)">${m.protein}g</span> P</div>
             <div class="meal-macro"><span style="color:var(--carbs)">${m.carbs}g</span> C</div>
             <div class="meal-macro"><span style="color:var(--fat)">${m.fat}g</span> F</div>
+            <div class="meal-macro"><span style="color:var(--fiber)">${m.fiber || 0}g</span> Fi</div>
           </div>
         </div>
         <div>
@@ -2088,6 +2109,7 @@ async function deleteMeal(idx, meal) {
   state.totalProtein -= meal.protein;
   state.totalCarbs   -= meal.carbs;
   state.totalFat     -= meal.fat;
+  state.totalFiber   -= (meal.fiber || 0);
 
   updateHomeScreen();
   showToast(`🗑️ ${meal.name} removed`);
@@ -2176,7 +2198,7 @@ function showToast(msg) {
 async function resetApp() {
   if (confirm('Sign out?')) {
     await sb.auth.signOut();
-    state = { name: 'Alex', goal: 2000, meals: [], totalEaten: 0, totalProtein: 0, totalCarbs: 0, totalFat: 0 };
+    state = { name: 'Alex', goal: 2000, meals: [], totalEaten: 0, totalProtein: 0, totalCarbs: 0, totalFat: 0, totalFiber: 0 };
     document.getElementById('bottom-nav').style.display = 'none';
     document.getElementById('auth-email').value    = '';
     document.getElementById('auth-password').value = '';
