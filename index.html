@@ -1892,7 +1892,7 @@ async function loadUserData(user) {
   state.weight       = profile.weight_kg || null;
   state.targetWeight = profile.target_weight_kg || null;
   state.sex          = profile.sex || 'male';
-  state.goalType     = profile.goal_type || 'maintain';
+  state.goalType     = profile.goal_type || state.goalType || 'maintain';
   state.email        = user.email;
 
   await loadTodaysMeals();
@@ -1993,8 +1993,9 @@ function goToProfile() {
   document.getElementById('profile-sex-female').classList.toggle('active', state.sex === 'female');
 
   // Goal toggle
+  const currentGoalType = state.goalType || 'maintain';
   ['lose','maintain','gain'].forEach(g => {
-    document.getElementById('profile-goal-' + g).classList.toggle('active', state.goalType === g);
+    document.getElementById('profile-goal-' + g).classList.toggle('active', currentGoalType === g);
   });
 
   // Reset AI rec card to hidden state each time profile is opened
