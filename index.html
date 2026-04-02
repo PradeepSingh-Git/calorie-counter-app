@@ -1677,6 +1677,7 @@
         <label class="input-label">Daily Calorie Goal</label>
         <input type="number" class="input-field" id="profile-calories" placeholder="2000" />
       </div>
+      <button id="show-ai-rec-btn" class="toggle-btn" style="width:100%;padding:12px;font-size:13px" onclick="showProfileRecommendation()">🤖 Show AI Recommendation</button>
       <div id="profile-ai-rec" style="display:none" class="suggestion-card">
         <div class="suggestion-label">🤖 AI Recommendation <span style="font-size:11px;font-weight:400;color:var(--text-muted);margin-left:4px">based on your stats</span></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
@@ -1996,16 +1997,16 @@ function goToProfile() {
     document.getElementById('profile-goal-' + g).classList.toggle('active', state.goalType === g);
   });
 
-  updateProfileRecommendation();
+  // Reset AI rec card to hidden state each time profile is opened
+  document.getElementById('profile-ai-rec').style.display  = 'none';
+  document.getElementById('show-ai-rec-btn').style.display = 'block';
 
   showScreen('screen-profile');
 }
 
 function updateProfileRecommendation() {
-  if (!state.age || !state.height || !state.weight) {
-    document.getElementById('profile-ai-rec').style.display = 'none';
-    return;
-  }
+  // Recompute values but keep card hidden — only show if already visible (user clicked the button)
+  if (!state.age || !state.height || !state.weight) return;
   const goalEl  = document.querySelector('#profile-goal-group .toggle-btn.active');
   const goalType = goalEl ? goalEl.textContent.toLowerCase() : 'maintain';
   const range   = calcIdealWeightRange(state.height);
@@ -2013,7 +2014,16 @@ function updateProfileRecommendation() {
   const recCal  = calcCalorieGoal(state.weight, state.height, state.age, state.sex, goalType);
   document.getElementById('profile-rec-cal').textContent    = recCal;
   document.getElementById('profile-rec-weight').textContent = idealWt ? idealWt + ' kg' : '—';
-  document.getElementById('profile-ai-rec').style.display   = 'block';
+}
+
+function showProfileRecommendation() {
+  if (!state.age || !state.height || !state.weight) {
+    showToast('⚠️ Fill in your age, height and weight first');
+    return;
+  }
+  updateProfileRecommendation();
+  document.getElementById('profile-ai-rec').style.display  = 'block';
+  document.getElementById('show-ai-rec-btn').style.display = 'none';
 }
 
 function applyProfileSuggestions() {
