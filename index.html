@@ -749,6 +749,56 @@
   .food-text-input:focus { border-color: var(--accent); }
   .food-text-input::placeholder { color: var(--text-dim); }
 
+  .past-meals-section {
+    width: 100%;
+  }
+  .past-meals-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .past-meals-search {
+    width: 100%;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 14px;
+    color: var(--text);
+    font-family: 'Satoshi', sans-serif;
+    outline: none;
+    margin-bottom: 10px;
+    transition: border-color 0.2s;
+  }
+  .past-meals-search:focus { border-color: var(--accent); }
+  .past-meals-list {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+  .past-meal-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .past-meal-item:active { border-color: var(--accent); }
+  .past-meal-emoji { font-size: 22px; flex-shrink: 0; }
+  .past-meal-info { flex: 1; min-width: 0; }
+  .past-meal-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .past-meal-macros { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .past-meal-cal { font-size: 14px; font-weight: 700; color: var(--accent); flex-shrink: 0; }
+
   .photo-hint-wrap {
     width: 100%;
     margin-top: 12px;
@@ -1516,6 +1566,16 @@
       </button>
     </div>
 
+    <div id="past-meals-section" class="past-meals-section" style="display:none;padding:0 20px">
+      <div class="past-meals-label">🕒 Log from past meals</div>
+      <input class="past-meals-search" id="past-meals-search" type="text" placeholder="Search past meals..."
+        autocomplete="off"
+        onfocus="showPastMealsList()"
+        oninput="filterPastMeals(this.value)"
+        onblur="setTimeout(()=>{ document.getElementById('past-meals-list').style.display='none'; }, 200)" />
+      <div class="past-meals-list" id="past-meals-list" style="display:none"></div>
+    </div>
+
     <div class="log-section">
       <div class="section-header">
         <div class="section-title">Today's Log</div>
@@ -1903,6 +1963,7 @@ async function loadUserData(user) {
   showScreen('screen-home');
   updateHomeScreen();
   updateWeekChart();
+  loadPastMeals();
 }
 
 async function loadTodaysMeals() {
@@ -2414,6 +2475,69 @@ function showResult(r) {
   }, 100);
 }
 
+// ─── PAST MEALS ───────────────────────────────────────────────────────────────
+let allPastMeals = [];
+
+async function loadPastMeals() {
+  const { data: { user } } = await sb.auth.getUser();
+  const { data } = await sb.from('meal_logs')
+    .select('name, calories, protein, carbs, fat, fiber, emoji')
+    .eq('user_id', user.id)
+    .order('logged_at', { ascending: false });
+
+  if (!data || data.length === 0) return;
+
+  // Deduplicate by name (keep most recent entry for each meal name)
+  const seen = new Set();
+  allPastMeals = data.filter(m => {
+    const key = m.name.toLowerCase().trim();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  if (allPastMeals.length > 0) {
+    document.getElementById('past-meals-section').style.display = 'block';
+    document.getElementById('past-meals-list').style.display = 'none';
+    document.getElementById('past-meals-search').value = '';
+  }
+}
+
+function showPastMealsList() {
+  document.getElementById('past-meals-list').style.display = 'flex';
+  renderPastMealsList(allPastMeals);
+}
+
+function filterPastMeals(query) {
+  const filtered = query.trim()
+    ? allPastMeals.filter(m => m.name.toLowerCase().includes(query.toLowerCase()))
+    : allPastMeals;
+  renderPastMealsList(filtered);
+}
+
+function renderPastMealsList(meals) {
+  const list = document.getElementById('past-meals-list');
+  if (meals.length === 0) {
+    list.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:8px 0">No matches found</div>';
+    return;
+  }
+  list.innerHTML = meals.map(m => `
+    <div class="past-meal-item" onclick="selectPastMeal(${JSON.stringify(m).replace(/"/g, '&quot;')})">
+      <div class="past-meal-emoji">${m.emoji || '🍽️'}</div>
+      <div class="past-meal-info">
+        <div class="past-meal-name">${m.name}</div>
+        <div class="past-meal-macros">P: ${m.protein}g &nbsp;C: ${m.carbs}g &nbsp;F: ${m.fat}g &nbsp;Fibre: ${m.fiber || 0}g</div>
+      </div>
+      <div class="past-meal-cal">${m.calories}<br><span style="font-size:10px;font-weight:400">kcal</span></div>
+    </div>
+  `).join('');
+}
+
+function selectPastMeal(meal) {
+  addToLog(meal);
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 async function addToLog(meal) {
   const { data: { user } } = await sb.auth.getUser();
   const now   = new Date();
@@ -2441,6 +2565,7 @@ async function addToLog(meal) {
   state.totalFiber   += fiber;
 
   updateHomeScreen();
+  loadPastMeals();
   showToast(`✅ ${meal.name} added!`);
   setTimeout(() => goToHome(), 800);
 }
