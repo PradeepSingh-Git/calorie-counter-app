@@ -1569,6 +1569,7 @@
     <div id="past-meals-section" class="past-meals-section" style="display:none;padding:0 20px">
       <div class="past-meals-label">🕒 Log from past meals</div>
       <input class="past-meals-search" id="past-meals-search" type="text" placeholder="Search past meals..."
+        autocomplete="off"
         onfocus="showPastMealsList()"
         oninput="filterPastMeals(this.value)"
         onblur="setTimeout(()=>{ document.getElementById('past-meals-list').style.display='none'; }, 200)" />
