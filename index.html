@@ -1566,6 +1566,13 @@
       </button>
     </div>
 
+    <div id="past-meals-section" class="past-meals-section" style="display:none;padding:0 20px">
+      <div class="past-meals-label">🕒 Log from past meals</div>
+      <input class="past-meals-search" id="past-meals-search" type="text" placeholder="Search past meals..."
+        oninput="filterPastMeals(this.value)" />
+      <div class="past-meals-list" id="past-meals-list"></div>
+    </div>
+
     <div class="log-section">
       <div class="section-header">
         <div class="section-title">Today's Log</div>
@@ -1607,13 +1614,6 @@
       <div class="photo-hint-wrap" id="photo-hint-wrap" style="display:none">
         <div class="photo-hint-label">Help the AI (optional)</div>
         <input class="photo-hint-input" id="photo-hint" type="text" placeholder="e.g. dal makhani, home-cooked biryani, about 1 cup..." />
-      </div>
-
-      <div id="past-meals-section" class="past-meals-section" style="display:none">
-        <div class="past-meals-label">🕒 Choose from past meals</div>
-        <input class="past-meals-search" id="past-meals-search" type="text" placeholder="Search past meals..."
-          oninput="filterPastMeals(this.value)" />
-        <div class="past-meals-list" id="past-meals-list"></div>
       </div>
 
       <div class="or-divider">
@@ -1960,6 +1960,7 @@ async function loadUserData(user) {
   showScreen('screen-home');
   updateHomeScreen();
   updateWeekChart();
+  loadPastMeals();
 }
 
 async function loadTodaysMeals() {
@@ -2197,12 +2198,8 @@ function goToScan() {
   showScreen('screen-scan');
   document.getElementById('result-area').innerHTML = '';
   document.getElementById('food-description').value = '';
-  document.getElementById('past-meals-search').value = '';
-  document.getElementById('past-meals-section').style.display = 'none';
-  allPastMeals = [];
   resetImageZone();
   updateActiveNav('scan');
-  loadPastMeals();
 }
 
 function switchTab(tab, btn) {
@@ -2528,10 +2525,13 @@ function renderPastMealsList(meals) {
 }
 
 function selectPastMeal(meal) {
-  showResult({ ...meal, tip: 'Logged from your past meals.' });
+  goToScan();
   setTimeout(() => {
-    document.getElementById('result-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 100);
+    showResult({ ...meal, tip: 'Logged from your past meals.' });
+    setTimeout(() => {
+      document.getElementById('result-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }, 50);
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -2562,6 +2562,7 @@ async function addToLog(meal) {
   state.totalFiber   += fiber;
 
   updateHomeScreen();
+  loadPastMeals();
   showToast(`✅ ${meal.name} added!`);
   setTimeout(() => goToHome(), 800);
 }
