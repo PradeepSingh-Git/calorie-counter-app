@@ -775,10 +775,10 @@
   }
   .past-meals-search:focus { border-color: var(--accent); }
   .past-meals-list {
-    display: flex;
+    display: none;
     flex-direction: column;
     gap: 8px;
-    max-height: 220px;
+    max-height: 260px;
     overflow-y: auto;
   }
   .past-meal-item {
@@ -1569,8 +1569,9 @@
     <div id="past-meals-section" class="past-meals-section" style="display:none;padding:0 20px">
       <div class="past-meals-label">🕒 Log from past meals</div>
       <input class="past-meals-search" id="past-meals-search" type="text" placeholder="Search past meals..."
+        onfocus="showPastMealsList()"
         oninput="filterPastMeals(this.value)" />
-      <div class="past-meals-list" id="past-meals-list"></div>
+      <div class="past-meals-list" id="past-meals-list" style="display:none"></div>
     </div>
 
     <div class="log-section">
@@ -2495,8 +2496,14 @@ async function loadPastMeals() {
 
   if (allPastMeals.length > 0) {
     document.getElementById('past-meals-section').style.display = 'block';
-    renderPastMealsList(allPastMeals);
+    document.getElementById('past-meals-list').style.display = 'none';
+    document.getElementById('past-meals-search').value = '';
   }
+}
+
+function showPastMealsList() {
+  document.getElementById('past-meals-list').style.display = 'flex';
+  renderPastMealsList(allPastMeals);
 }
 
 function filterPastMeals(query) {
