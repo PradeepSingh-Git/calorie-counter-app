@@ -2528,8 +2528,7 @@ function renderPastMealsList(meals) {
 }
 
 function selectPastMeal(meal) {
-  renderResult(meal);
-  // Scroll result into view
+  showResult({ ...meal, tip: 'Logged from your past meals.' });
   setTimeout(() => {
     document.getElementById('result-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, 100);
