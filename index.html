@@ -1570,7 +1570,8 @@
       <div class="past-meals-label">🕒 Log from past meals</div>
       <input class="past-meals-search" id="past-meals-search" type="text" placeholder="Search past meals..."
         onfocus="showPastMealsList()"
-        oninput="filterPastMeals(this.value)" />
+        oninput="filterPastMeals(this.value)"
+        onblur="setTimeout(()=>{ document.getElementById('past-meals-list').style.display='none'; }, 200)" />
       <div class="past-meals-list" id="past-meals-list" style="display:none"></div>
     </div>
 
