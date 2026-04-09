@@ -401,6 +401,65 @@
     flex-shrink: 0;
   }
 
+  /* MACRO DONUTS */
+  .macro-donuts-section {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 0 20px 16px;
+  }
+
+  .macro-donut-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 6px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .donut-svg {
+    width: 52px;
+    height: 52px;
+    transform: rotate(-90deg);
+  }
+
+  .donut-bg {
+    fill: none;
+    stroke: var(--surface2);
+    stroke-width: 5;
+  }
+
+  .donut-fill {
+    fill: none;
+    stroke-width: 5;
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.8s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  .donut-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .donut-val {
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Clash Display', sans-serif;
+    line-height: 1;
+  }
+
+  .donut-goal {
+    font-size: 10px;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
   /* SNAP BUTTON */
   .snap-section {
     padding: 0 24px 16px;
@@ -1555,6 +1614,45 @@
       </div>
     </div>
 
+    <!-- MACRO DONUTS -->
+    <div class="macro-donuts-section">
+      <div class="macro-donut-card">
+        <svg class="donut-svg" viewBox="0 0 44 44">
+          <circle class="donut-bg" cx="22" cy="22" r="18"/>
+          <circle class="donut-fill" id="donut-protein" cx="22" cy="22" r="18" stroke="var(--protein)" stroke-dasharray="0 113"/>
+        </svg>
+        <div class="donut-label">Protein</div>
+        <div class="donut-val" id="dval-protein" style="color:var(--protein)">0g</div>
+        <div class="donut-goal" id="dgoal-protein">/ —g</div>
+      </div>
+      <div class="macro-donut-card">
+        <svg class="donut-svg" viewBox="0 0 44 44">
+          <circle class="donut-bg" cx="22" cy="22" r="18"/>
+          <circle class="donut-fill" id="donut-carbs" cx="22" cy="22" r="18" stroke="var(--carbs)" stroke-dasharray="0 113"/>
+        </svg>
+        <div class="donut-label">Carbs</div>
+        <div class="donut-val" id="dval-carbs" style="color:var(--carbs)">0g</div>
+        <div class="donut-goal" id="dgoal-carbs">/ —g</div>
+      </div>
+      <div class="macro-donut-card">
+        <svg class="donut-svg" viewBox="0 0 44 44">
+          <circle class="donut-bg" cx="22" cy="22" r="18"/>
+          <circle class="donut-fill" id="donut-fat" cx="22" cy="22" r="18" stroke="var(--fat)" stroke-dasharray="0 113"/>
+        </svg>
+        <div class="donut-label">Fat</div>
+        <div class="donut-val" id="dval-fat" style="color:var(--fat)">0g</div>
+        <div class="donut-goal" id="dgoal-fat">/ —g</div>
+      </div>
+      <div class="macro-donut-card">
+        <svg class="donut-svg" viewBox="0 0 44 44">
+          <circle class="donut-bg" cx="22" cy="22" r="18"/>
+          <circle class="donut-fill" id="donut-fiber" cx="22" cy="22" r="18" stroke="var(--fiber)" stroke-dasharray="0 113"/>
+        </svg>
+        <div class="donut-label">Fibre</div>
+        <div class="donut-val" id="dval-fiber" style="color:var(--fiber)">0g</div>
+        <div class="donut-goal" id="dgoal-fiber">/ —g</div>
+      </div>
+    </div>
     <div class="snap-section">
       <button class="snap-btn" onclick="goToScan()">
         <div class="snap-icon">📸</div>
@@ -1739,6 +1837,27 @@
         <label class="input-label">Daily Calorie Goal</label>
         <input type="number" class="input-field" id="profile-calories" placeholder="2000" />
       </div>
+      <div class="section-title">Macro Goals (g/day)</div>
+      <div class="inline-fields">
+        <div class="input-group">
+          <label class="input-label" style="color:var(--protein)">Protein</label>
+          <input type="number" class="input-field" id="profile-goal-protein" placeholder="—" min="0" />
+        </div>
+        <div class="input-group">
+          <label class="input-label" style="color:var(--carbs)">Carbs</label>
+          <input type="number" class="input-field" id="profile-goal-carbs" placeholder="—" min="0" />
+        </div>
+      </div>
+      <div class="inline-fields">
+        <div class="input-group">
+          <label class="input-label" style="color:var(--fat)">Fat</label>
+          <input type="number" class="input-field" id="profile-goal-fat" placeholder="—" min="0" />
+        </div>
+        <div class="input-group">
+          <label class="input-label" style="color:var(--fiber)">Fibre</label>
+          <input type="number" class="input-field" id="profile-goal-fiber" placeholder="—" min="0" />
+        </div>
+      </div>
       <button id="show-ai-rec-btn" class="toggle-btn" style="width:100%;padding:12px;font-size:13px" onclick="showProfileRecommendation()">🤖 Show AI Recommendation</button>
       <div id="profile-ai-rec" style="display:none" class="suggestion-card">
         <div class="suggestion-label">🤖 AI Recommendation <span style="font-size:11px;font-weight:400;color:var(--text-muted);margin-left:4px">based on your stats</span></div>
@@ -1752,6 +1871,27 @@
             <div style="font-size:11px;color:var(--text-muted)">Target Weight</div>
             <div style="font-size:18px;font-weight:700;color:var(--accent2);font-family:'Clash Display',sans-serif" id="profile-rec-weight">—</div>
             <div style="font-size:11px;color:var(--text-muted)">kg</div>
+          </div>
+        </div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+          <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">Macro Goals</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+            <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:8px;text-align:center">
+              <div style="font-size:15px;font-weight:700;color:var(--protein)" id="profile-rec-protein">—</div>
+              <div style="font-size:10px;color:var(--text-muted)">Protein</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:8px;text-align:center">
+              <div style="font-size:15px;font-weight:700;color:var(--carbs)" id="profile-rec-carbs">—</div>
+              <div style="font-size:10px;color:var(--text-muted)">Carbs</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:8px;text-align:center">
+              <div style="font-size:15px;font-weight:700;color:var(--fat)" id="profile-rec-fat">—</div>
+              <div style="font-size:10px;color:var(--text-muted)">Fat</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:8px;text-align:center">
+              <div style="font-size:15px;font-weight:700;color:var(--fiber)" id="profile-rec-fiber">—</div>
+              <div style="font-size:10px;color:var(--text-muted)">Fibre</div>
+            </div>
           </div>
         </div>
         <button class="toggle-btn active" style="width:100%;margin-top:10px;padding:8px;font-size:12px" onclick="applyProfileSuggestions()">Apply Recommendations</button>
@@ -1820,6 +1960,10 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 let state = {
   name: 'Alex',
   goal: 2000,
+  goalProtein: null,
+  goalCarbs: null,
+  goalFat: null,
+  goalFiber: null,
   age: null,
   height: null,
   weight: null,
@@ -1865,6 +2009,19 @@ function getWeightStatus(weight, height) {
   if (bmi < 18.5) return { label: '↓ Below healthy range', cls: 'status-below' };
   if (bmi > 24.9) return { label: '↑ Above healthy range', cls: 'status-above' };
   return { label: '✓ Healthy range', cls: 'status-healthy' };
+}
+
+function calcMacroGoals(weight, calories, sex, goalType) {
+  // Protein: 1.8g/kg for lose/gain (preserve muscle), 1.6g/kg for maintain
+  const proteinPerKg = (goalType === 'maintain') ? 1.6 : 1.8;
+  const protein = Math.round(weight * proteinPerKg);
+  // Fat: 28% of total calories
+  const fat = Math.round((calories * 0.28) / 9);
+  // Carbs: remaining calories after protein and fat
+  const carbs = Math.round((calories - (protein * 4) - (fat * 9)) / 4);
+  // Fiber: 38g men, 25g women (dietary guidelines)
+  const fiber = sex === 'female' ? 25 : 38;
+  return { protein, carbs: Math.max(carbs, 0), fat, fiber };
 }
 
 function calcTargetWeight(weight, height, goalType) {
@@ -1949,6 +2106,10 @@ async function loadUserData(user) {
 
   state.name         = profile.name;
   state.goal         = profile.goal_calories;
+  state.goalProtein  = profile.goal_protein || null;
+  state.goalCarbs    = profile.goal_carbs || null;
+  state.goalFat      = profile.goal_fat || null;
+  state.goalFiber    = profile.goal_fiber || null;
   state.age          = profile.age || null;
   state.height       = profile.height_cm || null;
   state.weight       = profile.weight_kg || null;
@@ -2065,6 +2226,10 @@ function goToProfile() {
   document.getElementById('profile-weight').value        = state.weight || '';
   document.getElementById('profile-calories').value      = state.goal || 2000;
   document.getElementById('profile-target-weight').value = state.targetWeight || '';
+  document.getElementById('profile-goal-protein').value  = state.goalProtein || '';
+  document.getElementById('profile-goal-carbs').value    = state.goalCarbs || '';
+  document.getElementById('profile-goal-fat').value      = state.goalFat || '';
+  document.getElementById('profile-goal-fiber').value    = state.goalFiber || '';
   document.getElementById('profile-display-name').textContent  = state.name || '—';
   document.getElementById('profile-display-email').textContent = state.email || '—';
   document.getElementById('profile-avatar').textContent = (state.name || 'U')[0].toUpperCase();
@@ -2091,23 +2256,32 @@ function updateProfileRecommendation() {
   const enteredTarget = parseFloat(document.getElementById('profile-target-weight').value) || null;
   const range   = calcIdealWeightRange(state.height);
   const idealWt = range ? range.ideal : null;
-
-  // Use entered target weight if provided, else fall back to ideal BMI weight
   const targetWt = enteredTarget || idealWt;
 
   let effectiveGoal = 'maintain';
   if (targetWt && state.weight > targetWt + 1) effectiveGoal = 'lose';
   else if (targetWt && state.weight < targetWt - 1) effectiveGoal = 'gain';
 
-  const recCal = calcCalorieGoal(state.weight, state.height, state.age, state.sex, effectiveGoal);
+  const recCal    = calcCalorieGoal(state.weight, state.height, state.age, state.sex, effectiveGoal);
+  const recMacros = calcMacroGoals(state.weight, recCal, state.sex, effectiveGoal);
 
   // Auto-select goal type toggle
   ['lose','maintain','gain'].forEach(g => {
     document.getElementById('profile-goal-' + g).classList.toggle('active', g === effectiveGoal);
   });
 
-  document.getElementById('profile-rec-cal').textContent    = recCal;
-  document.getElementById('profile-rec-weight').textContent = targetWt ? targetWt + ' kg' : '—';
+  document.getElementById('profile-rec-cal').textContent     = recCal;
+  document.getElementById('profile-rec-weight').textContent  = targetWt ? targetWt + ' kg' : '—';
+  document.getElementById('profile-rec-protein').textContent = recMacros.protein + 'g';
+  document.getElementById('profile-rec-carbs').textContent   = recMacros.carbs + 'g';
+  document.getElementById('profile-rec-fat').textContent     = recMacros.fat + 'g';
+  document.getElementById('profile-rec-fiber').textContent   = recMacros.fiber + 'g';
+
+  // Store for apply
+  document.getElementById('profile-ai-rec').dataset.protein = recMacros.protein;
+  document.getElementById('profile-ai-rec').dataset.carbs   = recMacros.carbs;
+  document.getElementById('profile-ai-rec').dataset.fat     = recMacros.fat;
+  document.getElementById('profile-ai-rec').dataset.fiber   = recMacros.fiber;
 }
 
 function showProfileRecommendation() {
@@ -2121,10 +2295,15 @@ function showProfileRecommendation() {
 }
 
 function applyProfileSuggestions() {
-  const cal = document.getElementById('profile-rec-cal').textContent;
-  const wt  = document.getElementById('profile-rec-weight').textContent.replace(' kg','');
+  const cal     = document.getElementById('profile-rec-cal').textContent;
+  const wt      = document.getElementById('profile-rec-weight').textContent.replace(' kg','');
+  const recEl   = document.getElementById('profile-ai-rec');
   if (cal && cal !== '—') document.getElementById('profile-calories').value = cal;
   if (wt  && wt  !== '—') document.getElementById('profile-target-weight').value = wt;
+  if (recEl.dataset.protein) document.getElementById('profile-goal-protein').value = recEl.dataset.protein;
+  if (recEl.dataset.carbs)   document.getElementById('profile-goal-carbs').value   = recEl.dataset.carbs;
+  if (recEl.dataset.fat)     document.getElementById('profile-goal-fat').value     = recEl.dataset.fat;
+  if (recEl.dataset.fiber)   document.getElementById('profile-goal-fiber').value   = recEl.dataset.fiber;
 }
 
 async function saveProfile() {
@@ -2134,6 +2313,10 @@ async function saveProfile() {
   const weight       = parseFloat(document.getElementById('profile-weight').value) || null;
   const targetWeight = parseFloat(document.getElementById('profile-target-weight').value) || null;
   const calories     = parseInt(document.getElementById('profile-calories').value) || 2000;
+  const goalProtein  = parseInt(document.getElementById('profile-goal-protein').value) || null;
+  const goalCarbs    = parseInt(document.getElementById('profile-goal-carbs').value) || null;
+  const goalFat      = parseInt(document.getElementById('profile-goal-fat').value) || null;
+  const goalFiber    = parseInt(document.getElementById('profile-goal-fiber').value) || null;
   const sex          = document.getElementById('profile-sex-female').classList.contains('active') ? 'female' : 'male';
   const goalEl       = document.querySelector('#profile-goal-group .toggle-btn.active');
   const goalType     = goalEl ? goalEl.textContent.toLowerCase() : 'maintain';
@@ -2141,13 +2324,16 @@ async function saveProfile() {
   const { data: { user } } = await sb.auth.getUser();
   const { error } = await sb.from('profiles').upsert({
     id: user.id, name, goal_calories: calories,
-    age, height_cm: height, weight_kg: weight, target_weight_kg: targetWeight, sex, goal_type: goalType
+    age, height_cm: height, weight_kg: weight, target_weight_kg: targetWeight, sex, goal_type: goalType,
+    goal_protein: goalProtein, goal_carbs: goalCarbs, goal_fat: goalFat, goal_fiber: goalFiber
   });
   if (error) { showToast('❌ Failed to save'); return; }
 
   state.name = name; state.goal = calories;
   state.age = age; state.height = height; state.weight = weight;
   state.targetWeight = targetWeight; state.sex = sex; state.goalType = goalType;
+  state.goalProtein = goalProtein; state.goalCarbs = goalCarbs;
+  state.goalFat = goalFat; state.goalFiber = goalFiber;
   applyProfileToUI();
   document.getElementById('goal-display').textContent  = calories;
   document.getElementById('remaining-cal').textContent = Math.max(calories - state.totalEaten, 0);
@@ -2586,25 +2772,45 @@ function updateRing() {
   document.getElementById('remaining-cal').textContent = remaining;
   document.getElementById('goal-display').textContent = state.goal;
 
-  // Macros (rough daily targets)
-  const proteinGoal = (state.goal * 0.3) / 4;
-  const carbGoal = (state.goal * 0.45) / 4;
-  const fatGoal   = (state.goal * 0.25) / 9;
-  const fiberGoal = 30; // recommended daily fiber intake in grams
+  // Use stored macro goals if available, else fall back to calorie-ratio estimates
+  const fallback = state.weight
+    ? calcMacroGoals(state.weight, state.goal, state.sex, state.goalType)
+    : { protein: Math.round((state.goal * 0.3)/4), carbs: Math.round((state.goal * 0.45)/4), fat: Math.round((state.goal * 0.25)/9), fiber: 30 };
 
+  const proteinGoal = state.goalProtein || fallback.protein;
+  const carbGoal    = state.goalCarbs   || fallback.carbs;
+  const fatGoal     = state.goalFat     || fallback.fat;
+  const fiberGoal   = state.goalFiber   || fallback.fiber;
+
+  // Update macro bars (kept for ring-card section)
   const pp  = Math.min((state.totalProtein / proteinGoal) * 100, 100);
   const cp  = Math.min((state.totalCarbs / carbGoal) * 100, 100);
   const fp  = Math.min((state.totalFat / fatGoal) * 100, 100);
   const fip = Math.min((state.totalFiber / fiberGoal) * 100, 100);
 
   document.getElementById('bar-protein').style.width = pp + '%';
-  document.getElementById('bar-carbs').style.width = cp + '%';
-  document.getElementById('bar-fat').style.width = fp + '%';
-  document.getElementById('bar-fiber').style.width = fip + '%';
+  document.getElementById('bar-carbs').style.width   = cp + '%';
+  document.getElementById('bar-fat').style.width     = fp + '%';
+  document.getElementById('bar-fiber').style.width   = fip + '%';
   document.getElementById('val-protein').textContent = state.totalProtein + 'g';
-  document.getElementById('val-carbs').textContent = state.totalCarbs + 'g';
-  document.getElementById('val-fat').textContent = state.totalFat + 'g';
-  document.getElementById('val-fiber').textContent = state.totalFiber + 'g';
+  document.getElementById('val-carbs').textContent   = state.totalCarbs + 'g';
+  document.getElementById('val-fat').textContent     = state.totalFat + 'g';
+  document.getElementById('val-fiber').textContent   = state.totalFiber + 'g';
+
+  // Update donut charts — circumference for r=18 is 2π×18 ≈ 113
+  const donutCirc = 113;
+  updateDonut('donut-protein', 'dval-protein', 'dgoal-protein', state.totalProtein, proteinGoal, donutCirc);
+  updateDonut('donut-carbs',   'dval-carbs',   'dgoal-carbs',   state.totalCarbs,   carbGoal,    donutCirc);
+  updateDonut('donut-fat',     'dval-fat',     'dgoal-fat',     state.totalFat,     fatGoal,     donutCirc);
+  updateDonut('donut-fiber',   'dval-fiber',   'dgoal-fiber',   state.totalFiber,   fiberGoal,   donutCirc);
+}
+
+function updateDonut(circleId, valId, goalId, current, goal, circ) {
+  const pct  = Math.min(current / goal, 1);
+  const fill = pct * circ;
+  document.getElementById(circleId).setAttribute('stroke-dasharray', `${fill} ${circ}`);
+  document.getElementById(valId).textContent  = current + 'g';
+  document.getElementById(goalId).textContent = '/ ' + goal + 'g';
 }
 
 function renderMealsList() {
