@@ -559,6 +559,7 @@
     overflow: hidden;
     border-radius: var(--radius-sm);
     background: var(--surface);
+    box-shadow: var(--shadow);
     animation: entryIn 0.3s ease;
   }
 
@@ -576,16 +577,15 @@
   .meal-entry {
     background: var(--surface);
     border: none;
-    border-radius: var(--radius-sm);
+    border-radius: 0;
     padding: 14px 16px;
     display: flex;
     align-items: center;
     gap: 14px;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease;
     position: relative;
     z-index: 1;
-    box-shadow: var(--shadow);
   }
 
   @keyframes entryIn {
@@ -593,7 +593,7 @@
     to { opacity: 1; transform: scale(1); }
   }
 
-  .meal-entry:hover { box-shadow: var(--shadow-md); }
+  .meal-row:hover { box-shadow: var(--shadow-md); }
 
   .meal-emoji {
     width: 44px; height: 44px;
